@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paotui.mapper.JiaoyifankuiMapper">
+    <resultMap id="BaseResultMap" type="com.paotui.entity.Jiaoyifankui">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="project_id" property="projectId"/>
+        <result column="content" property="content"/>
+        <result column="paotui_id" property="paotuiId"/>
+        <result column="paotui_name" property="paotuiName"/>
+        <result column="create_time" property="createTime"/>
+        <result column="project_title" property="projectTitle"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        j.id, j.order_no, j.project_id, j.content, j.paotui_id, j.paotui_name, j.create_time,
+        p.title as project_title
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from jiaoyifankui j
+        left join paotuixiangmu p on j.project_id = p.id
+        where j.id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select <include refid="Base_Column_List"/>
+        from jiaoyifankui j
+        left join paotuixiangmu p on j.project_id = p.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (j.content like concat('%',#{keyword},'%') or j.order_no like concat('%',#{keyword},'%'))
+            </if>
+            <if test="paotuiId != null">and j.paotui_id = #{paotuiId}</if>
+        </where>
+        order by j.id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        delete from jiaoyifankui where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.paotui.entity.Jiaoyifankui" useGeneratedKeys="true" keyProperty="id">
+        insert into jiaoyifankui (order_no, project_id, content, paotui_id, paotui_name, create_time)
+        values (#{orderNo}, #{projectId}, #{content}, #{paotuiId}, #{paotuiName}, now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.paotui.entity.Jiaoyifankui" useGeneratedKeys="true" keyProperty="id">
+        insert into jiaoyifankui
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">order_no,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="content != null">content,</if>
+            <if test="paotuiId != null">paotui_id,</if>
+            <if test="paotuiName != null">paotui_name,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="paotuiId != null">#{paotuiId},</if>
+            <if test="paotuiName != null">#{paotuiName},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.paotui.entity.Jiaoyifankui">
+        update jiaoyifankui
+        <set>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="paotuiId != null">paotui_id = #{paotuiId},</if>
+            <if test="paotuiName != null">paotui_name = #{paotuiName},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.paotui.entity.Jiaoyifankui">
+        update jiaoyifankui set order_no = #{orderNo}, project_id = #{projectId}, content = #{content},
+        paotui_id = #{paotuiId}, paotui_name = #{paotuiName}
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.paotui.entity.Jiaoyifankui">
+        update jiaoyifankui set order_no = #{orderNo}, project_id = #{projectId}, content = #{content},
+        paotui_id = #{paotuiId}, paotui_name = #{paotuiName}
+        where id = #{id}
+    </update>
+</mapper>

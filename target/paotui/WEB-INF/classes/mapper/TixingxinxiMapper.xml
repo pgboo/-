@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paotui.mapper.TixingxinxiMapper">
+    <resultMap id="BaseResultMap" type="com.paotui.entity.Tixingxinxi">
+        <id column="id" property="id"/>
+        <result column="shangjia_id" property="shangjiaId"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="title" property="title"/>
+        <result column="content" property="content"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id, shangjia_id, order_no, title, content, status, create_time
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/> from tixingxinxi where id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select <include refid="Base_Column_List"/> from tixingxinxi
+        <where>
+            <if test="shangjiaId != null">and shangjia_id = #{shangjiaId}</if>
+            <if test="status != null">and status = #{status}</if>
+            <if test="keyword != null and keyword != ''">
+                and (title like concat('%',#{keyword},'%') or content like concat('%',#{keyword},'%'))
+            </if>
+        </where>
+        order by id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        delete from tixingxinxi where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.paotui.entity.Tixingxinxi" useGeneratedKeys="true" keyProperty="id">
+        insert into tixingxinxi (shangjia_id, order_no, title, content, status, create_time)
+        values (#{shangjiaId}, #{orderNo}, #{title}, #{content}, 0, now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.paotui.entity.Tixingxinxi" useGeneratedKeys="true" keyProperty="id">
+        insert into tixingxinxi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="shangjiaId != null">shangjia_id,</if>
+            <if test="orderNo != null">order_no,</if>
+            <if test="title != null">title,</if>
+            <if test="content != null">content,</if>
+            <if test="status != null">status,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="shangjiaId != null">#{shangjiaId},</if>
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="title != null">#{title},</if>
+            <if test="content != null">#{content},</if>
+            <if test="status != null">#{status},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.paotui.entity.Tixingxinxi">
+        update tixingxinxi
+        <set>
+            <if test="shangjiaId != null">shangjia_id = #{shangjiaId},</if>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="title != null">title = #{title},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.paotui.entity.Tixingxinxi">
+        update tixingxinxi set shangjia_id = #{shangjiaId}, order_no = #{orderNo}, title = #{title},
+        content = #{content}, status = #{status} where id = #{id}
+    </update>
+</mapper>

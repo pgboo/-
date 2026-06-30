@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paotui.mapper.PaotuixiangmuMapper">
+    <resultMap id="BaseResultMap" type="com.paotui.entity.Paotuixiangmu">
+        <id column="id" property="id"/>
+        <result column="title" property="title"/>
+        <result column="fenlei_id" property="fenleiId"/>
+        <result column="content" property="content"/>
+        <result column="require_time" property="requireTime"/>
+        <result column="fee" property="fee"/>
+        <result column="cover" property="cover"/>
+        <result column="user_id" property="userId"/>
+        <result column="shangjia_id" property="shangjiaId"/>
+        <result column="status" property="status"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="fenlei_name" property="fenleiName"/>
+        <result column="user_name" property="userName"/>
+        <result column="shangjia_name" property="shangjiaName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        p.id, p.title, p.fenlei_id, p.content, p.require_time, p.fee, p.cover, p.user_id, p.shangjia_id,
+        p.status, p.create_time, p.update_time,
+        f.name as fenlei_name,
+        u.name as user_name,
+        s.name as shangjia_name
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from paotuixiangmu p
+        left join paotuifenlei f on p.fenlei_id = f.id
+        left join user u on p.user_id = u.id
+        left join shangjia s on p.shangjia_id = s.id
+        where p.id = #{id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select <include refid="Base_Column_List"/>
+        from paotuixiangmu p
+        left join paotuifenlei f on p.fenlei_id = f.id
+        left join user u on p.user_id = u.id
+        left join shangjia s on p.shangjia_id = s.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (p.title like concat('%',#{keyword},'%') or p.content like concat('%',#{keyword},'%'))
+            </if>
+            <if test="fenleiId != null">and p.fenlei_id = #{fenleiId}</if>
+            <if test="status != null">and p.status = #{status}</if>
+            <if test="userId != null">and p.user_id = #{userId}</if>
+            <if test="shangjiaId != null">and p.shangjia_id = #{shangjiaId}</if>
+        </where>
+        order by p.id desc
+    </select>
+
+    <select id="selectCanJiedan" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from paotuixiangmu p
+        left join paotuifenlei f on p.fenlei_id = f.id
+        left join user u on p.user_id = u.id
+        left join shangjia s on p.shangjia_id = s.id
+        where p.status = 0
+        <if test="keyword != null and keyword != ''">
+            and (p.title like concat('%',#{keyword},'%') or p.content like concat('%',#{keyword},'%'))
+        </if>
+        <if test="fenleiId != null">and p.fenlei_id = #{fenleiId}</if>
+        order by p.id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        delete from paotuixiangmu where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.paotui.entity.Paotuixiangmu" useGeneratedKeys="true" keyProperty="id">
+        insert into paotuixiangmu (title, fenlei_id, content, require_time, fee, cover, user_id, shangjia_id, status, create_time)
+        values (#{title}, #{fenleiId}, #{content}, #{requireTime}, #{fee}, #{cover}, #{userId}, #{shangjiaId}, #{status}, now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.paotui.entity.Paotuixiangmu" useGeneratedKeys="true" keyProperty="id">
+        insert into paotuixiangmu
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="title != null">title,</if>
+            <if test="fenleiId != null">fenlei_id,</if>
+            <if test="content != null">content,</if>
+            <if test="requireTime != null">require_time,</if>
+            <if test="fee != null">fee,</if>
+            <if test="cover != null">cover,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="shangjiaId != null">shangjia_id,</if>
+            <if test="status != null">status,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="title != null">#{title},</if>
+            <if test="fenleiId != null">#{fenleiId},</if>
+            <if test="content != null">#{content},</if>
+            <if test="requireTime != null">#{requireTime},</if>
+            <if test="fee != null">#{fee},</if>
+            <if test="cover != null">#{cover},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="shangjiaId != null">#{shangjiaId},</if>
+            <if test="status != null">#{status},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.paotui.entity.Paotuixiangmu">
+        update paotuixiangmu
+        <set>
+            <if test="title != null">title = #{title},</if>
+            <if test="fenleiId != null">fenlei_id = #{fenleiId},</if>
+            <if test="content != null">content = #{content},</if>
+            <if test="requireTime != null">require_time = #{requireTime},</if>
+            <if test="fee != null">fee = #{fee},</if>
+            <if test="cover != null">cover = #{cover},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="shangjiaId != null">shangjia_id = #{shangjiaId},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.paotui.entity.Paotuixiangmu">
+        update paotuixiangmu set title = #{title}, fenlei_id = #{fenleiId}, content = #{content},
+        require_time = #{requireTime}, fee = #{fee}, cover = #{cover}, user_id = #{userId},
+        shangjia_id = #{shangjiaId}, status = #{status} where id = #{id}
+    </update>
+</mapper>

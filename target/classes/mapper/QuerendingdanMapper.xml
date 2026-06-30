@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paotui.mapper.QuerendingdanMapper">
+    <resultMap id="BaseResultMap" type="com.paotui.entity.Querendingdan">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="project_id" property="projectId"/>
+        <result column="user_id" property="userId"/>
+        <result column="user_name" property="userName"/>
+        <result column="user_phone" property="userPhone"/>
+        <result column="paotui_id" property="paotuiId"/>
+        <result column="paotui_name" property="paotuiName"/>
+        <result column="target_address" property="targetAddress"/>
+        <result column="fee" property="fee"/>
+        <result column="confirm_time" property="confirmTime"/>
+        <result column="score" property="score"/>
+        <result column="is_pay" property="isPay"/>
+        <result column="pay_time" property="payTime"/>
+        <result column="remark" property="remark"/>
+        <result column="create_time" property="createTime"/>
+        <result column="project_title" property="projectTitle"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        q.id, q.order_no, q.project_id, q.user_id, q.user_name, q.user_phone, q.paotui_id, q.paotui_name,
+        q.target_address, q.fee, q.confirm_time, q.score, q.is_pay, q.pay_time, q.remark, q.create_time,
+        p.title as project_title
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from querendingdan q
+        left join paotuixiangmu p on q.project_id = p.id
+        where q.id = #{id}
+    </select>
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from querendingdan q
+        left join paotuixiangmu p on q.project_id = p.id
+        where q.order_no = #{orderNo}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select <include refid="Base_Column_List"/>
+        from querendingdan q
+        left join paotuixiangmu p on q.project_id = p.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (q.order_no like concat('%',#{keyword},'%') or q.user_name like concat('%',#{keyword},'%') or q.paotui_name like concat('%',#{keyword},'%'))
+            </if>
+            <if test="userId != null">and q.user_id = #{userId}</if>
+            <if test="paotuiId != null">and q.paotui_id = #{paotuiId}</if>
+            <if test="isPay != null">and q.is_pay = #{isPay}</if>
+        </where>
+        order by q.id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        delete from querendingdan where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.paotui.entity.Querendingdan" useGeneratedKeys="true" keyProperty="id">
+        insert into querendingdan (order_no, project_id, user_id, user_name, user_phone, paotui_id, paotui_name,
+        target_address, fee, confirm_time, score, is_pay, pay_time, remark, create_time)
+        values (#{orderNo}, #{projectId}, #{userId}, #{userName}, #{userPhone}, #{paotuiId}, #{paotuiName},
+        #{targetAddress}, #{fee}, #{confirmTime}, #{score}, #{isPay}, #{payTime}, #{remark}, now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.paotui.entity.Querendingdan" useGeneratedKeys="true" keyProperty="id">
+        insert into querendingdan
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">order_no,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="userName != null">user_name,</if>
+            <if test="userPhone != null">user_phone,</if>
+            <if test="paotuiId != null">paotui_id,</if>
+            <if test="paotuiName != null">paotui_name,</if>
+            <if test="targetAddress != null">target_address,</if>
+            <if test="fee != null">fee,</if>
+            <if test="confirmTime != null">confirm_time,</if>
+            <if test="score != null">score,</if>
+            <if test="isPay != null">is_pay,</if>
+            <if test="payTime != null">pay_time,</if>
+            <if test="remark != null">remark,</if>
+            create_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="userName != null">#{userName},</if>
+            <if test="userPhone != null">#{userPhone},</if>
+            <if test="paotuiId != null">#{paotuiId},</if>
+            <if test="paotuiName != null">#{paotuiName},</if>
+            <if test="targetAddress != null">#{targetAddress},</if>
+            <if test="fee != null">#{fee},</if>
+            <if test="confirmTime != null">#{confirmTime},</if>
+            <if test="score != null">#{score},</if>
+            <if test="isPay != null">#{isPay},</if>
+            <if test="payTime != null">#{payTime},</if>
+            <if test="remark != null">#{remark},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.paotui.entity.Querendingdan">
+        update querendingdan
+        <set>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="userName != null">user_name = #{userName},</if>
+            <if test="userPhone != null">user_phone = #{userPhone},</if>
+            <if test="paotuiId != null">paotui_id = #{paotuiId},</if>
+            <if test="paotuiName != null">paotui_name = #{paotuiName},</if>
+            <if test="targetAddress != null">target_address = #{targetAddress},</if>
+            <if test="fee != null">fee = #{fee},</if>
+            <if test="confirmTime != null">confirm_time = #{confirmTime},</if>
+            <if test="score != null">score = #{score},</if>
+            <if test="isPay != null">is_pay = #{isPay},</if>
+            <if test="payTime != null">pay_time = #{payTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.paotui.entity.Querendingdan">
+        update querendingdan set order_no = #{orderNo}, project_id = #{projectId}, user_id = #{userId},
+        user_name = #{userName}, user_phone = #{userPhone}, paotui_id = #{paotuiId}, paotui_name = #{paotuiName},
+        target_address = #{targetAddress}, fee = #{fee}, confirm_time = #{confirmTime}, score = #{score},
+        is_pay = #{isPay}, pay_time = #{payTime}, remark = #{remark}
+        where id = #{id}
+    </update>
+</mapper>

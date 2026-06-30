@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.paotui.mapper.JiedanxinxiMapper">
+    <resultMap id="BaseResultMap" type="com.paotui.entity.Jiedanxinxi">
+        <id column="id" property="id"/>
+        <result column="order_no" property="orderNo"/>
+        <result column="project_id" property="projectId"/>
+        <result column="user_id" property="userId"/>
+        <result column="paotui_id" property="paotuiId"/>
+        <result column="paotui_name" property="paotuiName"/>
+        <result column="paotui_phone" property="paotuiPhone"/>
+        <result column="target_address" property="targetAddress"/>
+        <result column="fee" property="fee"/>
+        <result column="status" property="status"/>
+        <result column="jiedan_time" property="jiedanTime"/>
+        <result column="update_time" property="updateTime"/>
+        <result column="project_title" property="projectTitle"/>
+        <result column="user_name" property="userName"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        j.id, j.order_no, j.project_id, j.user_id, j.paotui_id, j.paotui_name, j.paotui_phone,
+        j.target_address, j.fee, j.status, j.jiedan_time, j.update_time,
+        p.title as project_title, u.name as user_name
+    </sql>
+
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from jiedanxinxi j
+        left join paotuixiangmu p on j.project_id = p.id
+        left join user u on j.user_id = u.id
+        where j.id = #{id}
+    </select>
+
+    <select id="selectByOrderNo" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from jiedanxinxi j
+        left join paotuixiangmu p on j.project_id = p.id
+        left join user u on j.user_id = u.id
+        where j.order_no = #{orderNo}
+    </select>
+
+    <select id="selectByProjectIdAndPaotuiId" resultMap="BaseResultMap">
+        select <include refid="Base_Column_List"/>
+        from jiedanxinxi j
+        left join paotuixiangmu p on j.project_id = p.id
+        left join user u on j.user_id = u.id
+        where j.project_id = #{projectId} and j.paotui_id = #{paotuiId}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap" parameterType="java.util.Map">
+        select <include refid="Base_Column_List"/>
+        from jiedanxinxi j
+        left join paotuixiangmu p on j.project_id = p.id
+        left join user u on j.user_id = u.id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                and (j.order_no like concat('%',#{keyword},'%') or p.title like concat('%',#{keyword},'%'))
+            </if>
+            <if test="userId != null">and j.user_id = #{userId}</if>
+            <if test="paotuiId != null">and j.paotui_id = #{paotuiId}</if>
+            <if test="status != null">and j.status = #{status}</if>
+            <if test="projectIds != null and projectIds.size() > 0">
+                and j.project_id in
+                <foreach collection="projectIds" item="pid" open="(" separator="," close=")">#{pid}</foreach>
+            </if>
+        </where>
+        order by j.id desc
+    </select>
+
+    <delete id="deleteByPrimaryKey">
+        delete from jiedanxinxi where id = #{id}
+    </delete>
+
+    <insert id="insert" parameterType="com.paotui.entity.Jiedanxinxi" useGeneratedKeys="true" keyProperty="id">
+        insert into jiedanxinxi (order_no, project_id, user_id, paotui_id, paotui_name, paotui_phone, target_address, fee, status, jiedan_time)
+        values (#{orderNo}, #{projectId}, #{userId}, #{paotuiId}, #{paotuiName}, #{paotuiPhone}, #{targetAddress}, #{fee}, #{status}, now())
+    </insert>
+
+    <insert id="insertSelective" parameterType="com.paotui.entity.Jiedanxinxi" useGeneratedKeys="true" keyProperty="id">
+        insert into jiedanxinxi
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">order_no,</if>
+            <if test="projectId != null">project_id,</if>
+            <if test="userId != null">user_id,</if>
+            <if test="paotuiId != null">paotui_id,</if>
+            <if test="paotuiName != null">paotui_name,</if>
+            <if test="paotuiPhone != null">paotui_phone,</if>
+            <if test="targetAddress != null">target_address,</if>
+            <if test="fee != null">fee,</if>
+            <if test="status != null">status,</if>
+            jiedan_time,
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="orderNo != null">#{orderNo},</if>
+            <if test="projectId != null">#{projectId},</if>
+            <if test="userId != null">#{userId},</if>
+            <if test="paotuiId != null">#{paotuiId},</if>
+            <if test="paotuiName != null">#{paotuiName},</if>
+            <if test="paotuiPhone != null">#{paotuiPhone},</if>
+            <if test="targetAddress != null">#{targetAddress},</if>
+            <if test="fee != null">#{fee},</if>
+            <if test="status != null">#{status},</if>
+            now(),
+        </trim>
+    </insert>
+
+    <update id="updateByPrimaryKeySelective" parameterType="com.paotui.entity.Jiedanxinxi">
+        update jiedanxinxi
+        <set>
+            <if test="orderNo != null">order_no = #{orderNo},</if>
+            <if test="projectId != null">project_id = #{projectId},</if>
+            <if test="userId != null">user_id = #{userId},</if>
+            <if test="paotuiId != null">paotui_id = #{paotuiId},</if>
+            <if test="paotuiName != null">paotui_name = #{paotuiName},</if>
+            <if test="paotuiPhone != null">paotui_phone = #{paotuiPhone},</if>
+            <if test="targetAddress != null">target_address = #{targetAddress},</if>
+            <if test="fee != null">fee = #{fee},</if>
+            <if test="status != null">status = #{status},</if>
+        </set>
+        where id = #{id}
+    </update>
+
+    <update id="updateByPrimaryKey" parameterType="com.paotui.entity.Jiedanxinxi">
+        update jiedanxinxi set order_no = #{orderNo}, project_id = #{projectId}, user_id = #{userId},
+        paotui_id = #{paotuiId}, paotui_name = #{paotuiName}, paotui_phone = #{paotuiPhone},
+        target_address = #{targetAddress}, fee = #{fee}, status = #{status}
+        where id = #{id}
+    </update>
+</mapper>
